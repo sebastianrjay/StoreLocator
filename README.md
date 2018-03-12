@@ -4,8 +4,7 @@
 1. Start PostgreSQL locally
 1. Run `bundle install`
 1. Run `rake db:create db:migrate`
-1. Run `rake stores:import` to import all stores from the CSV. It seems that the 
-occasional `Google API error: over query limit.` output is only a warning.
+1. Run `rake stores:import` to import all stores from the CSV
 
 # Store Locator Script Usage
 
@@ -55,7 +54,21 @@ on proximity to the equator and thus it's better to use the library.)
 fetches and saves the latitude and longitude of each address on creation, when 
 imported from `lib/assets/store-locations.csv` via `rake stores:import`.)
 
+**Assumptions** This codebase assumes that addresses are unique across stores, 
+as they are in the CSV. Normally I would denormalize addresses into a separate 
+table, and store an `address_id` field on any model with an address in case an 
+address is shared by multiple models.
+
 # Integration Tests
 
 Run `bundle exec rspec spec/features` to run the integration tests. Note that 
 they can only pass once the "Local Setup" steps above are complete.
+
+**NOTE:** If you see an error like this when running the integration tests 
+after seeding the database with `rake stores:import`:
+
+`app/services/store_finder.rb:46:in `get_lat_lng': undefined method `data' for nil:NilClass (NoMethodError)`
+
+then wait awhile until the Google Maps API query limit is no longer exceeded.
+
+Certain queries seem to have been cached, and do not trigger the error.
