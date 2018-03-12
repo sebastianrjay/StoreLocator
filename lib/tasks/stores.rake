@@ -4,7 +4,7 @@ namespace :stores do
   desc "Import stores from CSV"
   task import: :environment do
     IMPORT_FILE = Rails.root.join('lib', 'assets', 'store-locations.csv')
-    Rails.logger.info "Importing..."
+    puts "Importing..."
 
     CSV.foreach(IMPORT_FILE, :headers => true) do |row|
       data = row.to_hash.transform_keys do |key|
@@ -26,10 +26,10 @@ namespace :stores do
       data.delete(faulty_store_name_key)
       data["name"] = store_name
       
-      existing_store = Store.where(data).first
+      existing_store = Store.where(data.slice('name', 'address', 'zip')).first
       Store.create!(data) unless existing_store.present?
     end
 
-    Rails.logger.info "Import complete."
+    puts "Import complete."
   end
 end
