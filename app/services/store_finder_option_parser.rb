@@ -1,16 +1,18 @@
 require 'optparse'
 
 class StoreFinderOptionParser
-  def self.parse(args)
-    options = { output: 'text', units: 'mi' }
-
-    opt_parser = OptionParser.new do |opts|
-      opts.banner = "Usage:
+  BANNER = "Usage:
     rails runner find_store.rb --address=\"<address>\"
     rails runner find_store.rb --address=\"<address>\" [--units=(mi|km)] [--output=text|json]
     find_store --zip=<zip>
     find_store --zip=<zip> [--units=(mi|km)] [--output=text|json]
 "
+
+  def self.parse(args)
+    options = { output: 'text', units: 'mi' }
+
+    opt_parser = OptionParser.new do |opts|
+      opts.banner = BANNER
 
       opts.separator ''
       opts.separator 'Options:'

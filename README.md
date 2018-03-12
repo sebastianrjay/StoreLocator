@@ -27,3 +27,35 @@ Options:
                                        Format output in human-readable text, or in JSON (e.g. machine-readable) [default: text]
     -h, --help                       Show this message
 ```
+
+# Store Locator Algorithm Summary
+
+1. The latitude and longitude of the passed-in address or zip code is fetched 
+via the [geocoder](https://github.com/alexreisner/geocoder) library.
+2. We fetch all stores in the database where the latitude and longitude are both 
+within 1.0 degrees of the passed-in location. If none are found, we try 2.0 
+degrees. If none are found, we continue incrementing the largest possible lat 
+and lng difference from the passed in value, until reaching a max of 10.0 
+degrees. If no stores are found, the algorithm returns null without continuing.
+3. Once a set of stores is found in step 2, we find the closest store to the 
+passed-in location. To do this, we use the 
+[Pythagorean theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem) to 
+calculate the hypotenuse distance between the passed-in point and each store's 
+location, like this:
+
+`Math.sqrt((|store_lat| - |location_lat|) ** 2 + (|store_lng| - |location_lng|) ** 2)`
+
+4. We call `Geocoder::Calculations.distance_between(store, [lat, lng]` to find 
+the distance from the passed-in location to the nearest store found in step 3, 
+in miles or km. (Without this library, we could use the heuristic that each 
+latitude and degree equates to ~69 miles. In practice, this value varies based 
+on proximity to the equator and thus it's better to use the library.)
+
+(Note that the [geocoder](https://github.com/alexreisner/geocoder) library 
+fetches and saves the latitude and longitude of each address on creation, when 
+imported from `lib/assets/store-locations.csv` via `rake stores:import`.)
+
+# Integration Tests
+
+Run `bundle exec rspec spec/features` to run the integration tests. Note that 
+they can only pass once the "Local Setup" steps above are complete.

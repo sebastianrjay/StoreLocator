@@ -19,9 +19,9 @@ class StoreFinder
   private
 
   def compute_lat_lng_distance(store, lat, lng) # Using Pythagorean theorem
-    a_squared = (store.latitude.abs - lat.abs) ** 2
-    b_squared = (store.longitude.abs - lng.abs) ** 2
-    Math.sqrt(a_squared + b_squared)
+    vertical_distance_squared = (store.latitude.abs - lat.abs) ** 2
+    horizontal_distance_squared = (store.longitude.abs - lng.abs) ** 2
+    Math.sqrt(vertical_distance_squared + horizontal_distance_squared)
   end
 
   def compute_human_readable_distance(nearest_store, lat, lng)

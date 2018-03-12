@@ -1,4 +1,5 @@
 require 'csv'
+require File.expand_path('../../config/environment', File.dirname(__FILE__))
 
 namespace :stores do
   desc "Import stores from CSV"
